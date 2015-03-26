@@ -137,11 +137,10 @@ Entangled currently supports one-to-many associations.
 Inform your parent about the association:
 
 ```javascript
-  var Parent = new Entangled('ws://localhost:3000/parents');
+var Parent = new Entangled('ws://localhost:3000/parents');
 
-  // Set up association  
-  Parent.hasMany('children');
-});
+// Set up association  
+Parent.hasMany('children');
 ```
 
 This makes a `children()` function available on your parent records on which you can chain all other functions to fetch/manipulate data:
