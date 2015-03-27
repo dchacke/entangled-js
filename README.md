@@ -1,6 +1,8 @@
 # entangled-js
 Client side counterpart of Ruby gem [Entangled](https://github.com/dchacke/entangled) in plain JavaScript.
 
+(There is also [one for Angular](https://github.com/dchacke/entangled-angular).)
+
 ## Installation
 You can either download or reference the file `entangled.js` from this repository, or simply install it with Bower:
 
