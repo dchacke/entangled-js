@@ -1,5 +1,5 @@
 # entangled-js
-Client side counterpart of Ruby gem "Entangled" in plain JavaScript.
+Client side counterpart of Ruby gem [Entangled](https://github.com/dchacke/entangled) in plain JavaScript.
 
 ## Installation
 You can either download or reference the file `entangled.js` from this repository, or simply install it with Bower:
