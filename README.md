@@ -125,14 +125,6 @@ message.$save(function() {
 
 Note that `$valid()` and `$invalid()` should only be used after $saving a resource, i.e. in the callback of `$save`, since they don't actually invoke server side validations. They only check if a resource contains errors.
 
-### Persistence
-Just as with ActiveRecord's `persisted?` method, you can use `$persisted()` on an object to check if it was successfully stored in the database.
-
-```javascript
-message.$persisted();
-// => true or false
-```
-
 ### Associations
 Entangled currently supports one-to-many associations.
 
@@ -168,6 +160,33 @@ Parent.find(1, function(parent) {
 This is the way to go if you want to fetch records that only belong to a certain record, or create records that should belong to a parent record. In short, it is ideal to scope records to parent records.
 
 Naturally, all nested records are also synced in real time across all connected clients.
+
+### Helper Methods
+The following helper methods are available on Entangled objects just as with ActiveRecord.
+
+#### $persisted()
+Use `$persisted()` on an object to check if it was successfully stored in the database.
+
+```javascript
+$scope.message.$persisted();
+// => true or false
+```
+
+#### $newRecord()
+Use `$newRecord()` on an object to check if it is newly instantiated.
+
+```javascript
+$scope.message.$newRecord();
+// => true or false
+```
+
+#### $destroyed()
+Use `$destroyed()` on an object to check if it has been removed from the database.
+
+```javascript
+$scope.message.$destroyed();
+// => true or false
+```
 
 ## Contributing
 This repo is only a mirror for bower. Contribution happens in the gem's [main repo](https://github.com/dchacke/entangled#contributing).
