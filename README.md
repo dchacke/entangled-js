@@ -81,7 +81,9 @@ message.$update({ body: 'new body' }, function() {
 
 // To destroy a message
 message.$destroy(function() {
-  // Do stuff after destroy
+  // Do stuff after destroy;
+  // The message object is now frozen, so as to prevent
+  // further modification
 });
 ```
 
