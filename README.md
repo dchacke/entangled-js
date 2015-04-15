@@ -128,8 +128,9 @@ message.$save(function() {
 Note that `$valid()` and `$invalid()` should only be used after $saving a resource, i.e. in the callback of `$save`, since they don't actually invoke server side validations. They only check if a resource contains errors.
 
 ### Associations
-Entangled currently supports one-to-many associations.
+Entangled currently supports one-to-many associations through has-many and belongs-to associations.
 
+#### Has Many
 Inform your parent about the association:
 
 ```javascript
@@ -162,6 +163,38 @@ Parent.find(1, function(parent) {
 This is the way to go if you want to fetch records that only belong to a certain record, or create records that should belong to a parent record. In short, it is ideal to scope records to parent records.
 
 Naturally, all nested records are also synced in real time across all connected clients.
+
+#### Belongs To
+Inform your Child about the association:
+
+```javascript
+// Instantiate Entangled service
+var Child = new Entangled('ws://localhost:3000/parents/:parentId/children');
+
+// Set up association
+Child.belongsTo('parent');
+```
+
+Take note of the wildcard `:parentId` in the websocket URL. It has to be the foreign key as camel case. So long as your child instance has a foreign key, it will be able to fetch its parent.
+
+The above makes a `parent()` method available on your child records:
+
+```javascript
+Child.find(1, function(child) {
+  // Assuming the parentId on the child is set
+  child.parent(function(parent) {
+    // do stuff with parent
+  });
+});
+
+// or
+var child = Child.new({ parentId: 1 });
+child.parent(function(parent) {
+  // do stuff with parent
+});
+```
+
+In all above examples, the terms `parent`, `parents`, `child`, and `children` are only placeholders for your real model names. They will be overridden by what you pass to the methods `hasMany` and `belongsTo`.
 
 ### Helper Methods
 The following helper methods are available on Entangled objects just as with ActiveRecord.
