@@ -36,7 +36,7 @@ The Entangled constructor comes with these functions:
 - `$update(params, callback)`
 - `$destroy(callback)`
 
-They're just like class and instance methods in Active Record.
+They're just like class and instance methods in Active Record. All callbacks take an error and the actual instance(s).
 
 Here are some examples:
 
@@ -47,20 +47,20 @@ Here are some examples:
 var message = Message.new();
 
 // To instantiate and save a message in one go
-Message.create({ body: 'text' }, function(message) {
+Message.create({ body: 'text' }, function(err, message) {
   // Message was persisted on the server and is
   // available here
 });
 
 // To retrieve a specific message from the server
 // with id 1 and subscribe to its channel
-Message.find(1, function(message) {
+Message.find(1, function(err, message) {
   // Message with id 1 available here
 });
 
 // To retrieve all messages from the server and
 // subscribe to the collection's channel
-Message.all(function(messages) {
+Message.all(function(err, messages) {
   // All messages available here
 });
 
@@ -68,19 +68,19 @@ Message.all(function(messages) {
 // If saved successfully, the message is updated in place
 // with the attributes id, created_at and updated_at
 message.body = 'new body';
-message.$save(function() {
+message.$save(function(err, message) {
   // Do stuff after save
 });
 
 // To update a newly instantiated or existing message in place.
 // If updated successfully, the message is updated in place
 // with the attributes id, created_at and updated_at
-message.$update({ body: 'new body' }, function() {
+message.$update({ body: 'new body' }, function(err, message) {
   // Do stuff after update
 });
 
 // To destroy a message
-message.$destroy(function() {
+message.$destroy(function(err, message) {
   // Do stuff after destroy;
   // The message object is now frozen, so as to prevent
   // further modification
@@ -101,7 +101,7 @@ validates :body, presence: true
 
 ```javascript
 // Front end
-message.$save(function() {
+message.$save(function(err, message) {
   console.log(message.errors);
   // => { body: ["can't be blank"] }
 });
@@ -112,7 +112,7 @@ You could then display these error messages to your users.
 To check if a resource is valid, you can use `$valid()` and `$invalid()`. Both functions return booleans. For example:
 
 ```javascript
-message.$save(function() {
+message.$save(function(err, message) {
   // Check if record has no errors
   if (message.$valid()) { // similar to ActiveRecord's .valid?
     alert('Yay!');
@@ -143,16 +143,16 @@ Parent.hasMany('children');
 This makes a `children()` function available on your parent records on which you can chain all other functions to fetch/manipulate data:
 
 ```javascript
-Parent.find(1, function(parent) {
+Parent.find(1, function(err, parent) {
   parent.children().all(function(children) {
     // children here all belong to parent with id 1
   });
 
-  parent.children().find(1, function(child) {
+  parent.children().find(1, function(err, child) {
     // child has id 1 and belongs to parent with id 1
   });
 
-  parent.children().create({ foo: 'bar' }, function(child) {
+  parent.children().create({ foo: 'bar' }, function(err, child) {
     // child has been persisted and associated with parent
   });
 
@@ -180,16 +180,16 @@ Take note of the wildcard `:parentId` in the websocket URL. It has to be the for
 The above makes a `parent()` method available on your child records:
 
 ```javascript
-Child.find(1, function(child) {
+Child.find(1, function(err, child) {
   // Assuming the parentId on the child is set
-  child.parent(function(parent) {
+  child.parent(function(err, parent) {
     // do stuff with parent
   });
 });
 
 // or
 var child = Child.new({ parentId: 1 });
-child.parent(function(parent) {
+child.parent(function(err, parent) {
   // do stuff with parent
 });
 ```
@@ -222,6 +222,29 @@ Use `$destroyed()` on an object to check if it has been removed from the databas
 $scope.message.$destroyed();
 // => true or false
 ```
+
+### Errors
+The first argument passed to all callbacks is for error messages from your back end. For example, if you try to find a record with an id that does not exist in the database, ActiveRecord will yell at you:
+
+```
+Couldn't find Message with 'id'=1
+```
+
+This error message will then be passed to your callback.
+
+If an error is present, the second argument, the actual resource(s), is not passed. If there is no error, then the error parameter is set to `null`, and the second argument is passed. That's why you should always check if an error happened:
+
+```javascript
+Message.find('not an id', function(err, message) {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log(message)
+  }
+});
+```
+
+More on error-first-callbacks and the idea behind them can be found [here](http://fredkschott.com/post/2014/03/understanding-error-first-callbacks-in-node-js/).
 
 ## Contributing
 This repo is only a mirror for bower. Contribution happens in the gem's [main repo](https://github.com/dchacke/entangled#contributing).
