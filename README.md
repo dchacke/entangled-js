@@ -144,7 +144,7 @@ This makes a `children()` function available on your parent records on which you
 
 ```javascript
 Parent.find(1, function(err, parent) {
-  parent.children().all(function(children) {
+  parent.children().all(function(err, children) {
     // children here all belong to parent with id 1
   });
 
